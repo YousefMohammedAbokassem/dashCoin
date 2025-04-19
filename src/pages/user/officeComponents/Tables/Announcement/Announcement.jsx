@@ -17,30 +17,24 @@ import {
 
 const head = [
   { content: "sequence" },
-  { content: "الاسم" },
-  { content: "الشعار" },
-  { content: "الفئة" },
   { content: "العنوان" },
-  { content: "فعال" },
-  { content: "حظر" },
+  { content: "الصورة" },
+  { content: "التاريخ" },
+  { content: "حذف او تعديل" },
 ];
 
-export default function Events() {
+export default function Announcements() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [body, setBody] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [loadingSub, setLoadingSub] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState({
-    name: "",
-    market_category: "",
-    address: "",
-  });
-  const [logo, setLogo] = useState(null);
-  const [logoFile, setLogoFile] = useState(null);
+  const [image, setImage] = useState(null);
+  const [imageSend, setImageSend] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+  });
 
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);
@@ -50,11 +44,11 @@ export default function Events() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleLogoChange = (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setLogoFile(file);
+    setImageSend(file);
     if (file) {
-      setLogo(URL.createObjectURL(file));
+      setImage(URL.createObjectURL(file));
     }
   };
 
@@ -71,11 +65,14 @@ export default function Events() {
     event.preventDefault();
     setIsDragging(false);
     const file = event.dataTransfer.files[0];
-    setLogoFile(file);
+    setImageSend(file);
     if (file) {
-      setLogo(URL.createObjectURL(file));
+      setImage(URL.createObjectURL(file));
     }
   };
+
+  const [loadingSub, setLoadingSub] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = async () => {
     setLoadingSub(true);
@@ -83,15 +80,13 @@ export default function Events() {
 
     try {
       const formDataToSend = new FormData();
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("market_category", formData.market_category);
-      formDataToSend.append("address", formData.address);
-      if (logoFile) {
-        formDataToSend.append("logo", logoFile);
+      formDataToSend.append("title", formData.title);
+      if (image && imageSend) {
+        formDataToSend.append("image", imageSend);
       }
-
+      
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}admin/events/add`,
+        `${import.meta.env.VITE_API_URL}admin/announcement/add`,
         formDataToSend,
         {
           headers: {
@@ -103,8 +98,10 @@ export default function Events() {
 
       const newItem = res.data.data;
       setBody((prevData) => [...prevData, newItem]);
+
       handleCloseDialog();
     } catch (error) {
+      console.log(error);
       if (error.response?.status === 401) {
         dispatch(logoutUser());
       } else if (error.response?.status === 422) {
@@ -118,15 +115,13 @@ export default function Events() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}admin/get_events`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}adds`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-      setBody(res.data?.data?.data);
-      console.log(res.data)
+      setBody(res.data?.data);
     } catch (error) {
-      console.log(error)
       if (error.response?.status === 401) {
         dispatch(logoutUser());
       }
@@ -143,37 +138,70 @@ export default function Events() {
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <button
         onClick={handleOpenDialog}
-        className="bg-[#275963] text-white px-4 py-2 rounded-md mb-4 w-full"
+        className="bg-[#275963] text-white px-4 py-2 rounded-md mb-4 mr-auto block w-full"
       >
-        {t("إضافة حدث")}
+        {t("إضافة إعلان")}
       </button>
       {loading ? (
         <TableSkeleton />
       ) : (
-        <table className="w-full text-sm text-center text-[#1D1D1D] dark:text-[#fff]">
+        <table className="w-full text-sm text-left rtl:text-right text-[#1D1D1D] dark:text-[#fff]">
           <thead>
             <tr className="bg-[#fff] dark:bg-[#26292C] border-y dark:border-gray-700 border-gray-200">
               {head.map((item) => (
-                <th className="px-6 py-8" key={item.content}>
+                <th
+                  scope="col"
+                  className="px-6 py-8 text-center"
+                  key={item.content}
+                >
                   {t(item.content)}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            <TableRow currentData={body} fetchData={fetchData} setBody={setBody} />
+            <TableRow
+              currentData={body}
+              fetchData={fetchData}
+              setBody={setBody}
+            />
           </tbody>
         </table>
       )}
-
       {/* Dialog MUI */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{t("إضافة حدث جديد")}</DialogTitle>
+        <DialogTitle>{t("إضافة إعلان جديد")}</DialogTitle>
         <DialogContent>
-          <TextField label={t("اسم الحدث")} name="name" fullWidth margin="dense" onChange={handleChange} />
-          <TextField label={t("الفئة")} name="market_category" fullWidth margin="dense" onChange={handleChange} />
-          <TextField label={t("العنوان")} name="address" fullWidth margin="dense" onChange={handleChange} />
-          <input type="file" id="logo" hidden onChange={handleLogoChange} />
+          <TextField
+            label={t("عنوان الإعلان")}
+            name="title"
+            fullWidth
+            margin="dense"
+            onChange={handleChange}
+            error={!!errors.title}
+            helperText={errors.title ? errors.title[0] : ""}
+          />
+
+          <div
+            className={`logoImage h-52 flex items-center justify-center gap-5 w-full border border-[#BBBBBB] ${
+              isDragging ? "bg-gray-300" : ""
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <label htmlFor="image" className="w-full h-full cursor-pointer flex">
+              {image ? (
+                <img src={image} alt="announcementImage" className="w-full h-full" />
+              ) : (
+                <div className="w-full flex flex-col items-center justify-center gap-2">
+                  <div className="icon">📷</div>
+                  <span className="text-[#275963] text-lg">اسحب الصورة هنا أو تصفح الملفات</span>
+                </div>
+              )}
+              <input type="file" id="image" hidden onChange={handleImageChange} />
+            </label>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>{t("إلغاء")}</Button>

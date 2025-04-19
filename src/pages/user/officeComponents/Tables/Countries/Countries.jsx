@@ -18,29 +18,39 @@ import {
 const head = [
   { content: "sequence" },
   { content: "الاسم" },
-  { content: "الشعار" },
-  { content: "الفئة" },
-  { content: "العنوان" },
-  { content: "فعال" },
-  { content: "حظر" },
+  { content: "العملة" },
+  { content: "اللغة" },
+  { content: "الكود" },
+  { content: "ISO" },
+  { content: "الضريبة" },
+  { content: "العمولة" },
+  { content: "الإجراءات" },
 ];
 
-export default function Events() {
+const formDataKeys = {
+  name: "اسم البلد",
+  currency: "العملة",
+  lang: "اللغة",
+  code: "code",
+  iso: "iso",
+  tax: "الضريبة",
+  value_for_hun: "العمولة",
+};
+export default function Countries() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [body, setBody] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [loadingSub, setLoadingSub] = useState(false);
-  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     name: "",
-    market_category: "",
-    address: "",
+    currency: "",
+    lang: "",
+    code: "",
+    iso: "",
+    tax: "",
+    value_for_hun: "",
   });
-  const [logo, setLogo] = useState(null);
-  const [logoFile, setLogoFile] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
 
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);
@@ -50,53 +60,21 @@ export default function Events() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleLogoChange = (e) => {
-    const file = e.target.files[0];
-    setLogoFile(file);
-    if (file) {
-      setLogo(URL.createObjectURL(file));
-    }
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleDrop = (event) => {
-    event.preventDefault();
-    setIsDragging(false);
-    const file = event.dataTransfer.files[0];
-    setLogoFile(file);
-    if (file) {
-      setLogo(URL.createObjectURL(file));
-    }
-  };
+  const [loadingSub, setLoadingSub] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = async () => {
     setLoadingSub(true);
     setErrors({});
 
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("market_category", formData.market_category);
-      formDataToSend.append("address", formData.address);
-      if (logoFile) {
-        formDataToSend.append("logo", logoFile);
-      }
-
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}admin/events/add`,
-        formDataToSend,
+        `${import.meta.env.VITE_API_URL}admin/country/add`,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         }
       );
@@ -118,15 +96,13 @@ export default function Events() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}admin/get_events`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}countries`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-      setBody(res.data?.data?.data);
-      console.log(res.data)
+      setBody(res.data?.data);
     } catch (error) {
-      console.log(error)
       if (error.response?.status === 401) {
         dispatch(logoutUser());
       }
@@ -143,41 +119,61 @@ export default function Events() {
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <button
         onClick={handleOpenDialog}
-        className="bg-[#275963] text-white px-4 py-2 rounded-md mb-4 w-full"
+        className="bg-[#275963] text-white px-4 py-2 rounded-md mb-4 mr-auto block w-full"
       >
-        {t("إضافة حدث")}
+        {t("إضافة دولة")}
       </button>
       {loading ? (
         <TableSkeleton />
       ) : (
-        <table className="w-full text-sm text-center text-[#1D1D1D] dark:text-[#fff]">
+        <table className="w-full text-sm text-left rtl:text-right text-[#1D1D1D] dark:text-[#fff]">
           <thead>
             <tr className="bg-[#fff] dark:bg-[#26292C] border-y dark:border-gray-700 border-gray-200">
               {head.map((item) => (
-                <th className="px-6 py-8" key={item.content}>
+                <th
+                  scope="col"
+                  className="px-6 py-8 text-center"
+                  key={item.content}
+                >
                   {t(item.content)}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            <TableRow currentData={body} fetchData={fetchData} setBody={setBody} />
+            <TableRow
+              currentData={body}
+              fetchData={fetchData}
+              setBody={setBody}
+            />
           </tbody>
         </table>
       )}
-
       {/* Dialog MUI */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{t("إضافة حدث جديد")}</DialogTitle>
+        <DialogTitle>{t("إضافة دولة جديدة")}</DialogTitle>
         <DialogContent>
-          <TextField label={t("اسم الحدث")} name="name" fullWidth margin="dense" onChange={handleChange} />
-          <TextField label={t("الفئة")} name="market_category" fullWidth margin="dense" onChange={handleChange} />
-          <TextField label={t("العنوان")} name="address" fullWidth margin="dense" onChange={handleChange} />
-          <input type="file" id="logo" hidden onChange={handleLogoChange} />
+          {Object.values(formDataKeys).map((key) => (
+            <TextField
+              key={key}
+              label={t(key)}
+              name={key}
+              fullWidth
+              margin="dense"
+              onChange={handleChange}
+              error={!!errors[key]}
+              helperText={errors[key] ? errors[key][0] : ""}
+            />
+          ))}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>{t("إلغاء")}</Button>
-          <Button onClick={handleSubmit} color="primary" variant="contained" disabled={loadingSub}>
+          <Button
+            onClick={handleSubmit}
+            color="primary"
+            variant="contained"
+            disabled={loadingSub}
+          >
             {loadingSub ? <CircularProgress size={20} /> : t("إضافة")}
           </Button>
         </DialogActions>

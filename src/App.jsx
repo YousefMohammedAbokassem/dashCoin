@@ -12,6 +12,7 @@ import ForgetPassword from "./pages/forgetpassword/ForgetPassword";
 import Page404 from "./pages/Page404";
 import Office from "./pages/office/Office";
 import Nav from "./pages/nav/Nav";
+import User from "./pages/user/User";
 
 export default function Container() {
   const isAuth = useSelector((state) => state.auth.authenticate);
@@ -36,6 +37,7 @@ export default function Container() {
           {/* <Nav /> */}
           <Routes>
             <Route path="/Home" element={<Office />} />
+            <Route path="/User" element={<User />} />
             <Route path="/" element={<Navigate to="/Home" />} />
             <Route path="/NotFound" element={<Page404 />} />
             {/* <Route path="*" element={<Navigate to={"/NotFound"} />} /> */}

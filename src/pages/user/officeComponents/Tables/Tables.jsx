@@ -21,31 +21,9 @@ export default function Tables({ theTable }) {
       <Helmet>
         <title>{t(theTable)}</title>
       </Helmet>
-      {theTable === "cards" ? (
+      {theTable === "localReceived" ? (
         <Cards />
-      ) : theTable === "measures" ? (
-        <Measures />
-      ) : theTable === "categories" ? (
-        <Categories />
-      ) : theTable === "categoriesProduct" ? (
-        <Categories />
-      ) : theTable === "cities" ? (
-        <Cities />
-      ) : theTable === "countries" ? (
-        <Countries />
-      ) : theTable === "banners" ? (
-        <Banners />
-      ) : theTable === "announcements" ? (
-        <Announcements />
-      ) : theTable === "news" ? (
-        <News />
-      ) : theTable === "commission" ? (
-        <Commissions />
-      ) : theTable === "events" ? (
-        <Events />
-      ) : theTable === "users" ? (
-        <Users />
-      ) : (
+      ): (
         ""
       )}
     </>

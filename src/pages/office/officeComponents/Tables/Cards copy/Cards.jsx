@@ -241,7 +241,7 @@ export default function Cards() {
           <input type="file" onChange={handleFileChange} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>{t("Cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("إلغاء")}</Button>
           <Button onClick={handleSubmit} color="primary" variant="contained">
             {t("Submit")}
           </Button>

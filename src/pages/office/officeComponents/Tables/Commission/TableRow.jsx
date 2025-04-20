@@ -110,14 +110,14 @@ export default function TableRow({ currentData, fetchData, setBody }) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>{t("Cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("إلغاء")}</Button>
           <Button
             onClick={handleSubmit}
             color="primary"
             variant="contained"
             disabled={loadingSub}
           >
-            {loadingSub ? <CircularProgress size={20} /> : t("Save")}
+            {loadingSub ? <CircularProgress size={20} /> : t("تعديل")}
           </Button>
         </DialogActions>
       </Dialog>

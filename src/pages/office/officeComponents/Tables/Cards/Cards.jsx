@@ -19,7 +19,7 @@ const head = [
   { content: "sequence" },
   { content: "النوع" },
   { content: "السعر" },
-  { content: "العمولة" },
+  { content: "الرصيد عند التفعيل" },
   { content: "المكافأة" },
   { content: "الصورة" },
   { content: "حذف او تعديل" },
@@ -180,7 +180,7 @@ export default function Measures() {
       )}
       {/* Dialog MUI */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{t("Add New Card")}</DialogTitle>
+        <DialogTitle>{t("إضافة بطاقة جديدة")}</DialogTitle>
         <DialogContent>
           <div
             className={`logoImage h-52 flex items-center justify-center gap-5 w-full border border-[#BBBBBB] ${

@@ -173,5 +173,10 @@
   "categoriesStore": "فئات المتاجر",
   "categoriesProduct": "فئات المنتجات",
   "users": "المستخدمين",
-  "localReceived":"الوارد الوطني"
+  "localReceived": "الوارد الوطني",
+  "localSended": "الصادر الوطني",
+  "internationalReceived": "الوارد الدولي",
+  "internationalSended": "الصادر الدولي",
+  "localEvent": "فعاليات وطنية",
+  "internationalEvent": "فعاليات دولية"
 }

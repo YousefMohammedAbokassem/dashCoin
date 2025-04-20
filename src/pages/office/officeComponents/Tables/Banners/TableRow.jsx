@@ -167,30 +167,30 @@ export default function TableRow({ currentData, fetchData, setBody }) {
 
       {/* Dialog for delete confirmation */}
       <Dialog open={open} onClose={handleDialogClose}>
-        <DialogTitle>{t("Confirm Deletion")}</DialogTitle>
+        <DialogTitle>{t("تأكيد الحذف")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {t("Are you sure you want to delete this banner?")}
+            {t("هل أنت متأكد أنك تريد حذف هذه اللافتة؟")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose}>{t("No")}</Button>
+          <Button onClick={handleDialogClose}>{t("لا")}</Button>
           <Button
             onClick={onDelete}
             color="error"
             variant="contained"
             disabled={loading}
           >
-            {loading ? <CircularProgress size={20} /> : t("Yes")}
+            {loading ? <CircularProgress size={20} /> : t("نعم")}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Dialog for editing */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{t("Edit Banner")}</DialogTitle>
+        <DialogTitle>{t("تعديل اللافتة")}</DialogTitle>
         <DialogContent>
-        <div
+          <div
             className={`logoImage h-52 flex items-center justify-center gap-5 w-full border border-[#BBBBBB] ${
               isDragging ? "bg-gray-300" : ""
             }`}
@@ -234,14 +234,14 @@ export default function TableRow({ currentData, fetchData, setBody }) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>{t("Cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("إلغاء")}</Button>
           <Button
             onClick={handleSubmit}
             color="primary"
             variant="contained"
             disabled={loadingSub}
           >
-            {loadingSub ? <CircularProgress size={20} /> : t("Save")}
+            {loadingSub ? <CircularProgress size={20} /> : t("تعديل")}
           </Button>
         </DialogActions>
       </Dialog>

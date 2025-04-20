@@ -103,7 +103,7 @@ export default function TableRow({ currentData, fetchData, setBody }) {
   const handleSubmit = async () => {
     setLoadingSub(true);
     const formDataToSend = new FormData();
-    console.log(editData)
+    console.log(editData);
     formDataToSend.append("_method", "PUT");
     formDataToSend.append("announcement_id", editData.id);
     formDataToSend.append("title", editData.title);
@@ -125,6 +125,7 @@ export default function TableRow({ currentData, fetchData, setBody }) {
       fetchData();
     } catch (error) {
       console.log(error);
+      alert("تأكد من تعبئة كل الحقول وحاول مرة أخرى");
     } finally {
       setLoadingSub(false);
     }

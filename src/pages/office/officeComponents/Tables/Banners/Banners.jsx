@@ -100,6 +100,7 @@ export default function Banners() {
       if (error.response?.status === 401) {
         dispatch(logoutUser());
       } else if (error.response?.status === 422) {
+        alert("تأكد من تعبئة كل الحقول وحاول مرة أخرى");
         setErrors(error.response.data.errors);
       }
     } finally {
@@ -185,22 +186,41 @@ export default function Banners() {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           >
-            <label htmlFor="image" className="w-full h-full cursor-pointer flex">
+            <label
+              htmlFor="image"
+              className="w-full h-full cursor-pointer flex"
+            >
               {imagePreview ? (
-                <img src={imagePreview} alt="Banner" className="w-full h-full" />
+                <img
+                  src={imagePreview}
+                  alt="Banner"
+                  className="w-full h-full"
+                />
               ) : (
                 <div className="w-full flex flex-col items-center justify-center gap-2">
                   <div className="icon">📷</div>
-                  <span className="text-[#275963] text-lg">اسحب الصورة هنا أو تصفح الملفات</span>
+                  <span className="text-[#275963] text-lg">
+                    اسحب الصورة هنا أو تصفح الملفات
+                  </span>
                 </div>
               )}
-              <input type="file" id="image" hidden onChange={handleImageChange} />
+              <input
+                type="file"
+                id="image"
+                hidden
+                onChange={handleImageChange}
+              />
             </label>
           </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>{t("إلغاء")}</Button>
-          <Button onClick={handleSubmit} color="primary" variant="contained" disabled={loadingSub}>
+          <Button
+            onClick={handleSubmit}
+            color="primary"
+            variant="contained"
+            disabled={loadingSub}
+          >
             {loadingSub ? <CircularProgress size={20} /> : t("إضافة")}
           </Button>
         </DialogActions>

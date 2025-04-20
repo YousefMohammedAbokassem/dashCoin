@@ -22,7 +22,7 @@ export default function TableRow({ currentData }) {
           <td className="px-6 py-8 text-center">{i + 1}</td>
           <td className="px-6 py-8 text-center">{item.first_name}</td>
           <td className="px-6 py-8 text-center">{item.last_name}</td>
-          <td className="px-6 py-8 text-center">{item.phone_number}</td>
+          <td className="px-6 py-8 text-center">{item.phone_number}+</td>
           <td className="px-6 py-8 text-center">{item.national_id}</td>
           <td className="px-6 py-8 text-center">
             {item.local_financial_balance.toFixed(2)}

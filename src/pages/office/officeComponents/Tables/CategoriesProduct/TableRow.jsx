@@ -34,7 +34,9 @@ export default function TableRow({ currentData, fetchData, setBody }) {
     setLoading(true);
     try {
       await axios.delete(
-        `${import.meta.env.VITE_API_URL}admin/product_category/delete/${itemToDelete.id}`,
+        `${import.meta.env.VITE_API_URL}admin/product_category/delete/${
+          itemToDelete.id
+        }`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -118,6 +120,7 @@ export default function TableRow({ currentData, fetchData, setBody }) {
       setOpenDialog(false);
       fetchData();
     } catch (error) {
+      alert("تأكد من تعبئة كل الحقول وحاول مرة أخرى");
       console.log(error);
     } finally {
       setLoadingSub(false);
@@ -167,28 +170,28 @@ export default function TableRow({ currentData, fetchData, setBody }) {
 
       {/* Dialog for delete confirmation */}
       <Dialog open={open} onClose={handleDialogClose}>
-        <DialogTitle>{t("Confirm Deletion")}</DialogTitle>
+        <DialogTitle>{t("تأكيد الحذف")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {t("Are you sure you want to delete this category?")}
+            {t("هل أنت متأكد أنك تريد حذف هذه الفئة")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose}>{t("No")}</Button>
+          <Button onClick={handleDialogClose}>{t("لا")}</Button>
           <Button
             onClick={onDelete}
             color="error"
             variant="contained"
             disabled={loading}
           >
-            {loading ? <CircularProgress size={20} /> : t("Yes")}
+            {loading ? <CircularProgress size={20} /> : t("نعم")}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Dialog for editing */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{t("Edit Category")}</DialogTitle>
+        <DialogTitle>{t("تعديل الفئة")}</DialogTitle>
         <DialogContent>
           <div
             className={`logoImage h-52 flex items-center justify-center gap-5 w-full border border-[#BBBBBB] ${

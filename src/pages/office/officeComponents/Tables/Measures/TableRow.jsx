@@ -94,6 +94,7 @@ export default function TableRow({ currentData, fetchData, setBody }) {
       fetchData();
     } catch (error) {
       console.log(error);
+      alert("تأكد من تعبئة كل الحقول وحاول مرة أخرى")
     } finally {
       setLoadingSub(false);
     }
@@ -127,31 +128,31 @@ export default function TableRow({ currentData, fetchData, setBody }) {
 
       {/* Dialog for delete confirmation */}
       <Dialog open={open} onClose={handleDialogClose}>
-        <DialogTitle>{t("Confirm Deletion")}</DialogTitle>
+        <DialogTitle>{t("تأكيد الحذف")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {t("Are you sure you want to delete this item?")}
+            {t("هل أنت متأكد أنك تريد حذف هذا العنصر")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose}>{t("No")}</Button>
+          <Button onClick={handleDialogClose}>{t("لا")}</Button>
           <Button
             onClick={onDelete}
             color="error"
             variant="contained"
             disabled={loading}
           >
-            {loading ? <CircularProgress size={20} /> : t("Yes")}
+            {loading ? <CircularProgress size={20} /> : t("نعم")}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Dialog for editing */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{t("Edit Measure")}</DialogTitle>
+        <DialogTitle>{t("تأكيد الحذف")}</DialogTitle>
         <DialogContent>
           <TextField
-            label={t("Measure Name")}
+            label={t("اسم المقاس")}
             name="name"
             fullWidth
             margin="dense"
@@ -160,14 +161,14 @@ export default function TableRow({ currentData, fetchData, setBody }) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>{t("Cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("إلغاء")}</Button>
           <Button
             onClick={handleSubmit}
             color="primary"
             variant="contained"
             disabled={loadingSub}
           >
-            {loadingSub ? <CircularProgress size={20} /> : t("Save")}
+            {loadingSub ? <CircularProgress size={20} /> : t("تعديل")}
           </Button>
         </DialogActions>
       </Dialog>

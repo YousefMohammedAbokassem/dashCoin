@@ -68,13 +68,15 @@ export default function Cities() {
 
       const newItem = res.data.data;
       setBody((prevData) => [...prevData, newItem]);
-      console.log(res.data.data)
+      console.log(res.data.data);
       handleCloseDialog();
     } catch (error) {
       console.log(error);
+      
       if (error.response?.status === 401) {
         dispatch(logoutUser());
       } else if (error.response?.status === 422) {
+        alert("تأكد من تعبئة كل الحقول وحاول مرة أخرى");
         setErrors(error.response.data.errors);
       }
     } finally {
@@ -91,7 +93,6 @@ export default function Cities() {
         },
       });
       setBody(res.data?.data);
-      
     } catch (error) {
       if (error.response?.status === 401) {
         dispatch(logoutUser());
@@ -184,7 +185,12 @@ export default function Cities() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>{t("إلغاء")}</Button>
-          <Button onClick={handleSubmit} color="primary" variant="contained" disabled={loadingSub}>
+          <Button
+            onClick={handleSubmit}
+            color="primary"
+            variant="contained"
+            disabled={loadingSub}
+          >
             {loadingSub ? <CircularProgress size={20} /> : t("إضافة")}
           </Button>
         </DialogActions>

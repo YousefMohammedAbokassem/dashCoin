@@ -29,13 +29,16 @@ export default function TableRow({ currentData, fetchData, setBody }) {
     tax: "",
     value_for_hun: "",
   });
+  console.log(currentData);
   const [loadingSub, setLoadingSub] = useState(false);
 
   const onDelete = async () => {
     setLoading(true);
     try {
       await axios.delete(
-        `${import.meta.env.VITE_API_URL}admin/country/delete/${itemToDelete.id}`,
+        `${import.meta.env.VITE_API_URL}admin/country/delete/${
+          itemToDelete.id
+        }`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -79,17 +82,35 @@ export default function TableRow({ currentData, fetchData, setBody }) {
 
   const handleSubmit = async () => {
     setLoadingSub(true);
-    const formDataToSend = new FormData();
 
+    const formDataToSend = new FormData();
     formDataToSend.append("_method", "PUT");
-    formDataToSend.append("name", editData.name);
-    formDataToSend.append("name", editData.country_id);
-    formDataToSend.append("currency", editData.currency);
-    formDataToSend.append("lang", editData.lang);
-    formDataToSend.append("code", editData.code);
-    formDataToSend.append("iso", editData.iso);
-    formDataToSend.append("tax", editData.tax);
-    formDataToSend.append("value_for_hun", editData.value_for_hun);
+    formDataToSend.append("country_id", editData.id); // تأكد من إرسال الـ ID دائمًا
+
+    // مقارنة الحقول الأصلية بالمعدلة
+    const originalItem = currentData.find((item) => item.id === editData.id);
+
+    if (originalItem.name !== editData.name) {
+      formDataToSend.append("name", editData.name);
+    }
+    if (originalItem.currency !== editData.currency) {
+      formDataToSend.append("currency", editData.currency);
+    }
+    if (originalItem.lang !== editData.lang) {
+      formDataToSend.append("lang", editData.lang);
+    }
+    if (originalItem.code !== editData.code) {
+      formDataToSend.append("code", editData.code);
+    }
+    if (originalItem.iso !== editData.iso) {
+      formDataToSend.append("iso", editData.iso);
+    }
+    if (originalItem.tax !== editData.tax) {
+      formDataToSend.append("tax", editData.tax);
+    }
+    if (originalItem.value_for_hun !== editData.value_for_hun) {
+      formDataToSend.append("value_for_hun", editData.value_for_hun);
+    }
 
     try {
       await axios.post(
@@ -143,39 +164,93 @@ export default function TableRow({ currentData, fetchData, setBody }) {
       ))}
 
       <Dialog open={open} onClose={handleDialogClose}>
-        <DialogTitle>{t("Confirm Deletion")}</DialogTitle>
+        <DialogTitle>{t("تأكيد الحذف")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {t("Are you sure you want to delete this country?")}
+            {t("هل أنت متأكد أنك تريد حذف هذا البلد؟")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose}>{t("No")}</Button>
+          <Button onClick={handleDialogClose}>{t("لا")}</Button>
           <Button
             onClick={onDelete}
             color="error"
             variant="contained"
             disabled={loading}
           >
-            {loading ? <CircularProgress size={20} /> : t("Yes")}
+            {loading ? <CircularProgress size={20} /> : t("نعم")}
           </Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{t("Edit Country")}</DialogTitle>
+        <DialogTitle>{t("تعديل البلد")}</DialogTitle>
         <DialogContent>
-          <TextField label={t("اسم البلد")} name="name" fullWidth margin="dense" onChange={handleChange} value={editData.name} />
-          <TextField label={t("العملة")} name="currency" fullWidth margin="dense" onChange={handleChange} value={editData.currency} />
-          <TextField label={t("اللغة")} name="lang" fullWidth margin="dense" onChange={handleChange} value={editData.lang} />
-          <TextField label={t("Code")} name="code" fullWidth margin="dense" onChange={handleChange} value={editData.code} />
-          <TextField label={t("ISO")} name="iso" fullWidth margin="dense" onChange={handleChange} value={editData.iso} />
-          <TextField label={t("الضريبة")} name="tax" fullWidth margin="dense" onChange={handleChange} value={editData.tax} />
-          <TextField label={t("العمولة")} name="value_for_hun" fullWidth margin="dense" onChange={handleChange} value={editData.value_for_hun} />
+          <TextField
+            label={t("اسم البلد")}
+            name="name"
+            fullWidth
+            margin="dense"
+            onChange={handleChange}
+            value={editData.name}
+          />
+          <TextField
+            label={t("العملة")}
+            name="currency"
+            fullWidth
+            margin="dense"
+            onChange={handleChange}
+            value={editData.currency}
+          />
+          <TextField
+            label={t("اللغة")}
+            name="lang"
+            fullWidth
+            margin="dense"
+            onChange={handleChange}
+            value={editData.lang}
+          />
+          <TextField
+            label={t("Code")}
+            name="code"
+            fullWidth
+            margin="dense"
+            onChange={handleChange}
+            value={editData.code}
+          />
+          <TextField
+            label={t("ISO")}
+            name="iso"
+            fullWidth
+            margin="dense"
+            onChange={handleChange}
+            value={editData.iso}
+          />
+          <TextField
+            label={t("الضريبة")}
+            name="tax"
+            fullWidth
+            margin="dense"
+            onChange={handleChange}
+            value={editData.tax}
+          />
+          <TextField
+            label={t("العمولة")}
+            name="value_for_hun"
+            fullWidth
+            margin="dense"
+            onChange={handleChange}
+            value={editData.value_for_hun}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>{t("إلغاء")}</Button>
-          <Button onClick={handleSubmit} color="primary" variant="contained" disabled={loadingSub}>
+          <Button
+            onClick={handleSubmit}
+            color="primary"
+            variant="contained"
+            disabled={loadingSub}
+          >
             {loadingSub ? <CircularProgress size={20} /> : t("حفظ")}
           </Button>
         </DialogActions>

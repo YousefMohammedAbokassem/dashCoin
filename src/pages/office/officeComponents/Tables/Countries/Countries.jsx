@@ -31,11 +31,12 @@ const formDataKeys = {
   name: "اسم البلد",
   currency: "العملة",
   lang: "اللغة",
-  code: "code",
-  iso: "iso",
+  code: "الكود",
+  iso: "ISO",
   tax: "الضريبة",
   value_for_hun: "العمولة",
 };
+
 export default function Countries() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -50,6 +51,7 @@ export default function Countries() {
     iso: "",
     tax: "",
     value_for_hun: "",
+    flag: "/snc.png",
   });
 
   const handleOpenDialog = () => setOpenDialog(true);
@@ -66,7 +68,6 @@ export default function Countries() {
   const handleSubmit = async () => {
     setLoadingSub(true);
     setErrors({});
-
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}admin/country/add`,
@@ -82,7 +83,18 @@ export default function Countries() {
       const newItem = res.data.data;
       setBody((prevData) => [...prevData, newItem]);
       handleCloseDialog();
+      setFormData({
+        // إعادة تعيين النموذج بعد الإرسال
+        name: "",
+        currency: "",
+        lang: "",
+        code: "",
+        iso: "",
+        tax: "",
+        value_for_hun: "",
+      });
     } catch (error) {
+      console.log(error);
       if (error.response?.status === 401) {
         dispatch(logoutUser());
       } else if (error.response?.status === 422) {
@@ -149,18 +161,18 @@ export default function Countries() {
           </tbody>
         </table>
       )}
-      {/* Dialog MUI */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>{t("إضافة دولة جديدة")}</DialogTitle>
         <DialogContent>
-          {Object.values(formDataKeys).map((key) => (
+          {Object.entries(formDataKeys).map(([key, label]) => (
             <TextField
               key={key}
-              label={t(key)}
+              label={t(label)}
               name={key}
               fullWidth
               margin="dense"
               onChange={handleChange}
+              value={formData[key]}
               error={!!errors[key]}
               helperText={errors[key] ? errors[key][0] : ""}
             />

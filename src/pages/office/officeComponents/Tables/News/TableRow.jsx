@@ -114,7 +114,7 @@ export default function TableRow({ currentData, fetchData, setBody }) {
           <td className="px-6 py-8 text-center">{item.date}</td>
           <td
             className={`px-6 py-8 text-center`}
-            style={{ backgroundColor: item.color_code ,color:"white"}}
+            style={{ backgroundColor: item.color_code, color: "white" }}
           >
             {item.color_code}
           </td>
@@ -138,21 +138,19 @@ export default function TableRow({ currentData, fetchData, setBody }) {
 
       {/* Dialog for delete confirmation */}
       <Dialog open={open} onClose={handleDialogClose}>
-        <DialogTitle>{t("Confirm Deletion")}</DialogTitle>
+        <DialogTitle>{t("تأكيد الحذف")}</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            {t("Are you sure you want to delete this update?")}
-          </DialogContentText>
+          <DialogContentText>{t("هل أنت متأكد أنك تزيد حذف هذا الخبر")}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose}>{t("No")}</Button>
+          <Button onClick={handleDialogClose}>{t("لا")}</Button>
           <Button
             onClick={onDelete}
             color="error"
             variant="contained"
             disabled={loading}
           >
-            {loading ? <CircularProgress size={20} /> : t("Yes")}
+            {loading ? <CircularProgress size={20} /> : t("نعم")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -196,14 +194,14 @@ export default function TableRow({ currentData, fetchData, setBody }) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>{t("Cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("إلغاء")}</Button>
           <Button
             onClick={handleSubmit}
             color="primary"
             variant="contained"
             disabled={loadingSub}
           >
-            {loadingSub ? <CircularProgress size={20} /> : t("Save")}
+            {loadingSub ? <CircularProgress size={20} /> : t("تعديل")}
           </Button>
         </DialogActions>
       </Dialog>

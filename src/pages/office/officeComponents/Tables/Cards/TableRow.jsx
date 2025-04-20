@@ -127,6 +127,8 @@ export default function TableRow({ currentData, fetchData, setBody }) {
       setOpenDialog(false);
       fetchData();
     } catch (error) {
+      alert("تأكد من تعبئة كل الحقول وحاول مرة أخرى");
+
       console.log(error);
     } finally {
       setLoadingSub(false);
@@ -149,9 +151,9 @@ export default function TableRow({ currentData, fetchData, setBody }) {
         >
           <td className="px-6 py-8 text-center">{i + 1}</td>
           <td className="px-6 py-8 text-center">{item.type}</td>
-          <td className="px-6 py-8 text-center">{item.price}</td>
-          <td className="px-6 py-8 text-center">{item.hun} %</td>
-          <td className="px-6 py-8 text-center">{item.reward}</td>
+          <td className="px-6 py-8 text-center">{item.price} SNC</td>
+          <td className="px-6 py-8 text-center">{item.hun} SNC</td>
+          <td className="px-6 py-8 text-center">{item.reward} SNC</td>
           <td className="px-6 py-8 text-center flex justify-center">
             <img
               src={`${import.meta.env.VITE_API_URL_IMAGE}${item.image}`}
@@ -178,28 +180,28 @@ export default function TableRow({ currentData, fetchData, setBody }) {
 
       {/* Dialog for delete confirmation */}
       <Dialog open={open} onClose={handleDialogClose}>
-        <DialogTitle>{t("Confirm Deletion")}</DialogTitle>
+        <DialogTitle>{t("تأكيد الحذف")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {t("Are you sure you want to delete this item?")}
+            {t("هل أنت متأكد أنك تريد حذف هذا العنصر")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose}>{t("No")}</Button>
+          <Button onClick={handleDialogClose}>{t("لا")}</Button>
           <Button
             onClick={onDelete}
             color="error"
             variant="contained"
             disabled={loading}
           >
-            {loading ? <CircularProgress size={20} /> : t("Yes")}
+            {loading ? <CircularProgress size={20} /> : t("نعم")}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Dialog for editing */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{t("Edit Card")}</DialogTitle>
+        <DialogTitle>{t("تعديل البطاقة")}</DialogTitle>
         <DialogContent>
           <div
             className={`logoImage h-52 flex items-center justify-center gap-5 w-full border border-[#BBBBBB] ${
@@ -279,7 +281,7 @@ export default function TableRow({ currentData, fetchData, setBody }) {
             variant="contained"
             disabled={loadingSub}
           >
-            {loadingSub ? <CircularProgress size={20} /> : t("حفظ")}
+            {loadingSub ? <CircularProgress size={20} /> : t("تعديل")}
           </Button>
         </DialogActions>
       </Dialog>

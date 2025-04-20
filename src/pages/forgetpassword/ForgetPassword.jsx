@@ -330,13 +330,13 @@ export default function Page() {
                 ) : (
                   t("verification")
                 )
-              ) : // t("save")
+              ) : // t("تعديل")
               newPasswordLoading ? (
                 <p className="flex justify-center">
                   <FaSpinner className="animate-spin" />
                 </p>
               ) : (
-                t("save")
+                t("تعديل")
               )}
             </button>
           </div>

@@ -5,53 +5,55 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../../../../../store/slices/auth/authSlice";
 import TableSkeleton from "../../../../../components/TableSkeleton";
+import { useSearchParams } from "react-router-dom";
 
 const head = [
-  { content: "sequence" },
-  { content: "نوع العمولة" },
-  { content: "القيمة" },
-  { content: "تعديل" },
+  { content: "الرقم التسلسلي" },
+  { content: "رقم العملية" },
+  { content: "الاسم الكامل" },
+  { content: "رقم هاتف المرسل اليه " },
+  { content: "المبلغ" },
+  { content: "تاريخ العملية" },
+  { content: "الوقت" },
 ];
 
-export default function Commissions() {
+export default function LocalSended() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [body, setBody] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    nextPage: null,
+    prevPage: null,
+  });
 
-  const totalPages = Math.ceil(body.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentData = body.slice(indexOfFirstItem, indexOfLastItem);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
-  };
-
-  const handleItemsPerPageChange = (e) => {
-    setItemsPerPage(Number(e.target.value));
-    setCurrentPage(1);
-  };
+  const [searchParams] = useSearchParams();
+  const tableParam = searchParams.get("table");
+  const userId = tableParam?.split("/")[1];
 
   const fetchData = async () => {
+    if (!userId) return;
     setLoading(true);
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}value_commission/get`,
+        `${import.meta.env.VITE_API_URL}admin/user_financial_traffic/local/sended/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         }
       );
-      setBody(res.data?.data);
+      setBody(res.data?.data?.data || []);
+      setPagination({
+        currentPage: res.data?.data?.current_page || 1,
+        totalPages: res.data?.data?.last_page || 1,
+        nextPage: res.data?.data?.next_page_url,
+        prevPage: res.data?.data?.prev_page_url,
+      });
     } catch (error) {
+      console.log({error})
       if (error.response?.status === 401) {
         dispatch(logoutUser());
       }
@@ -60,9 +62,27 @@ export default function Commissions() {
     }
   };
 
+  const handleNextPage = () => {
+    if (pagination.nextPage) {
+      setPagination((prevState) => ({
+        ...prevState,
+        currentPage: prevState.currentPage + 1,
+      }));
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (pagination.prevPage) {
+      setPagination((prevState) => ({
+        ...prevState,
+        currentPage: prevState.currentPage - 1,
+      }));
+    }
+  };
+
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [userId, pagination.currentPage]);
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -85,72 +105,45 @@ export default function Commissions() {
               </tr>
             </thead>
             <tbody>
-              <TableRow
-                currentData={currentData}
-                fetchData={fetchData}
-                setBody={setBody}
-              />
+              <TableRow currentData={body} />
             </tbody>
           </table>
+
           {/* Pagination */}
           <div className="pagination flex items-center justify-between h-10 mt-4 p-6">
             <div className="items flex items-center gap-2">
               <p className="text-[#1D1D1D] dark:text-[#fff]">
                 {t("itemsPerPage")}
               </p>
-              <select
-                value={itemsPerPage}
-                onChange={handleItemsPerPageChange}
-                className="bg-[#275963] dark:bg-[#E1B145] text-[#fff] py-[6px] px-2 mx-2 rounded-sm"
-              >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-              </select>
               <p className="text-[#1D1D1D] dark:text-[#fff]">
-                {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, body.length)}{" "}
-                من {body.length} عنصر
+                {pagination.currentPage} من {pagination.totalPages} {t("pages")}
               </p>
             </div>
             <div className="pages flex items-center gap-4">
               <div className="taps flex items-center gap-2">
                 <button
-                  className={`previous py-1 px-3 font-bold rounded-sm bg-[#275963] dark:bg-[#E1B145] text-[#fff] ${
-                    currentPage === 1
+                  className={`py-1 px-3 font-bold rounded-sm bg-[#275963] dark:bg-[#E1B145] text-[#fff] ${
+                    !pagination.prevPage
                       ? "cursor-not-allowed opacity-70"
                       : "cursor-pointer"
-                  } `}
+                  }`}
                   onClick={handlePrevPage}
-                  disabled={currentPage === 1}
+                  disabled={!pagination.prevPage}
                 >
                   {"<"}
                 </button>
                 <button
-                  className={`next py-1 px-3 font-bold rounded-sm bg-[#275963] dark:bg-[#E1B145] text-[#fff] ${
-                    currentPage >= totalPages
+                  className={`py-1 px-3 font-bold rounded-sm bg-[#275963] dark:bg-[#E1B145] text-[#fff] ${
+                    !pagination.nextPage
                       ? "cursor-not-allowed opacity-70"
                       : "cursor-pointer"
-                  } `}
+                  }`}
                   onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
+                  disabled={!pagination.nextPage}
                 >
                   {">"}
                 </button>
               </div>
-              <select
-                value={currentPage}
-                onChange={(e) => setCurrentPage(Number(e.target.value))}
-                className="bg-[#275963] dark:bg-[#E1B145] text-[#fff] py-[6px] px-2 mx-2 rounded-sm"
-              >
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {i + 1}
-                  </option>
-                ))}
-              </select>
-              <p className="text-[#1D1D1D] dark:text-[#fff]">
-                {t("from")} {totalPages} {t("pages")}
-              </p>
             </div>
           </div>
         </>

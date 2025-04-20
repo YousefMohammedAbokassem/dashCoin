@@ -15,7 +15,12 @@ import {
   MenuItem,
 } from "@mui/material";
 
-export default function TableRow({ currentData, fetchData, setBody, countries }) {
+export default function TableRow({
+  currentData,
+  fetchData,
+  setBody,
+  countries,
+}) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -137,21 +142,21 @@ export default function TableRow({ currentData, fetchData, setBody, countries })
 
       {/* Dialog for delete confirmation */}
       <Dialog open={open} onClose={handleDialogClose}>
-        <DialogTitle>{t("Confirm Deletion")}</DialogTitle>
+        <DialogTitle>{t("تأكيد الحذف")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {t("Are you sure you want to delete this city?")}
+            {t("هل أنت متأكد أنك تريد حذف هذه المدينة")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose}>{t("No")}</Button>
+          <Button onClick={handleDialogClose}>{t("لا")}</Button>
           <Button
             onClick={onDelete}
             color="error"
             variant="contained"
             disabled={loading}
           >
-            {loading ? <CircularProgress size={20} /> : t("Yes")}
+            {loading ? <CircularProgress size={20} /> : t("نعم")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -184,14 +189,14 @@ export default function TableRow({ currentData, fetchData, setBody, countries })
           </Select>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>{t("Cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("إلغاء")}</Button>
           <Button
             onClick={handleSubmit}
             color="primary"
             variant="contained"
             disabled={loadingSub}
           >
-            {loadingSub ? <CircularProgress size={20} /> : t("Save")}
+            {loadingSub ? <CircularProgress size={20} /> : t("تعديل")}
           </Button>
         </DialogActions>
       </Dialog>

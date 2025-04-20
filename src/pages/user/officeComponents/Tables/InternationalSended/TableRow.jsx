@@ -11,7 +11,7 @@ export default function TableRow({ currentData }) {
           <td className="px-6 py-4">{item.serial_number}</td> {/* رقم تسلسلي */}
           <td className="px-6 py-4">{item.number_of_process}</td> {/* رقم العملية */}
           <td className="px-6 py-4">{item.full_name}</td> {/* الاسم الكامل */}
-          <td className="px-6 py-4">{item.sender_phone_number}</td> {/* رقم هاتف المرسل */}
+          <td className="px-6 py-4">{item.receiver_phone_number}+</td> {/* رقم هاتف المرسل */}
           <td className="px-6 py-4">{item.amount}</td> {/* المبلغ */}
           <td className="px-6 py-4">{item.date}</td> {/* تاريخ العملية */}
           <td className="px-6 py-4">{item.time}</td> {/* وقت العملية */}

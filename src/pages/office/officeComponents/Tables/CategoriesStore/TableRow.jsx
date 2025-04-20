@@ -22,20 +22,21 @@ export default function TableRow({ currentData, fetchData, setBody }) {
   const [editData, setEditData] = useState({
     method: "_PUT",
     name: "",
-    currency: "",
-    lang: "",
-    code: "",
-    iso: "",
-    tax: "",
-    value_for_hun: "",
+    logo: "",
   });
+  const [background, setBackground] = useState(null);
+  const [backgroundSend, setBackgroundSend] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [loadingSub, setLoadingSub] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const onDelete = async () => {
     setLoading(true);
     try {
       await axios.delete(
-        `${import.meta.env.VITE_API_URL}admin/country/delete/${itemToDelete.id}`,
+        `${import.meta.env.VITE_API_URL}admin/market_category/delete/${
+          itemToDelete.id
+        }`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -55,6 +56,7 @@ export default function TableRow({ currentData, fetchData, setBody }) {
 
   const onEdit = (item) => {
     setEditData(item);
+    setBackground(`${import.meta.env.VITE_API_URL_IMAGE}${item.logo}`);
     setOpenDialog(true);
   };
 
@@ -72,9 +74,27 @@ export default function TableRow({ currentData, fetchData, setBody }) {
     setOpenDialog(false);
   };
 
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    setIsDragging(false);
+    const file = event.dataTransfer.files[0];
+    setBackgroundSend(file);
+    if (file) {
+      setBackground(URL.createObjectURL(file));
+    }
+  };
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditData({ ...editData, [name]: value });
+    setEditData({ ...editData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
@@ -82,18 +102,14 @@ export default function TableRow({ currentData, fetchData, setBody }) {
     const formDataToSend = new FormData();
 
     formDataToSend.append("_method", "PUT");
+    formDataToSend.append("market_category_id", editData.id);
     formDataToSend.append("name", editData.name);
-    formDataToSend.append("name", editData.country_id);
-    formDataToSend.append("currency", editData.currency);
-    formDataToSend.append("lang", editData.lang);
-    formDataToSend.append("code", editData.code);
-    formDataToSend.append("iso", editData.iso);
-    formDataToSend.append("tax", editData.tax);
-    formDataToSend.append("value_for_hun", editData.value_for_hun);
-
+    if (background && backgroundSend) {
+      formDataToSend.append("logo", backgroundSend);
+    }
     try {
       await axios.post(
-        `${import.meta.env.VITE_API_URL}admin/country/update`,
+        `${import.meta.env.VITE_API_URL}admin/market_category/update`,
         formDataToSend,
         {
           headers: {
@@ -110,6 +126,14 @@ export default function TableRow({ currentData, fetchData, setBody }) {
     }
   };
 
+  const handleBackgroundChange = (e) => {
+    const file = e.target.files[0];
+    setBackgroundSend(file);
+    if (file) {
+      setBackground(URL.createObjectURL(file));
+    }
+  };
+
   return (
     <>
       {currentData?.map((item, i) => (
@@ -119,12 +143,13 @@ export default function TableRow({ currentData, fetchData, setBody }) {
         >
           <td className="px-6 py-8 text-center">{i + 1}</td>
           <td className="px-6 py-8 text-center">{item.name}</td>
-          <td className="px-6 py-8 text-center">{item.currency}</td>
-          <td className="px-6 py-8 text-center">{item.lang}</td>
-          <td className="px-6 py-8 text-center">{item.code}</td>
-          <td className="px-6 py-8 text-center">{item.iso}</td>
-          <td className="px-6 py-8 text-center">{item.tax}</td>
-          <td className="px-6 py-8 text-center">{item.value_for_hun}</td>
+          <td className="px-6 py-8 text-center">
+            <img
+              src={`${import.meta.env.VITE_API_URL_IMAGE}${item.logo}`}
+              alt={item.name}
+              className="w-52 h-24"
+            />
+          </td>
           <td className="px-6 py-8 text-center">
             <button
               onClick={() => onEdit(item)}
@@ -142,40 +167,82 @@ export default function TableRow({ currentData, fetchData, setBody }) {
         </tr>
       ))}
 
+      {/* Dialog for delete confirmation */}
       <Dialog open={open} onClose={handleDialogClose}>
-        <DialogTitle>{t("Confirm Deletion")}</DialogTitle>
+        <DialogTitle>{t("تأكيد الحذف")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {t("Are you sure you want to delete this country?")}
+            {t("هل أنت متأكد أنك تريد حذف هذه الفئة")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose}>{t("No")}</Button>
+          <Button onClick={handleDialogClose}>{t("لا")}</Button>
           <Button
             onClick={onDelete}
             color="error"
             variant="contained"
             disabled={loading}
           >
-            {loading ? <CircularProgress size={20} /> : t("Yes")}
+            {loading ? <CircularProgress size={20} /> : t("نعم")}
           </Button>
         </DialogActions>
       </Dialog>
 
+      {/* Dialog for editing */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{t("Edit Country")}</DialogTitle>
+        <DialogTitle>{t("Edit Category")}</DialogTitle>
         <DialogContent>
-          <TextField label={t("اسم البلد")} name="name" fullWidth margin="dense" onChange={handleChange} value={editData.name} />
-          <TextField label={t("العملة")} name="currency" fullWidth margin="dense" onChange={handleChange} value={editData.currency} />
-          <TextField label={t("اللغة")} name="lang" fullWidth margin="dense" onChange={handleChange} value={editData.lang} />
-          <TextField label={t("Code")} name="code" fullWidth margin="dense" onChange={handleChange} value={editData.code} />
-          <TextField label={t("ISO")} name="iso" fullWidth margin="dense" onChange={handleChange} value={editData.iso} />
-          <TextField label={t("الضريبة")} name="tax" fullWidth margin="dense" onChange={handleChange} value={editData.tax} />
-          <TextField label={t("العمولة")} name="value_for_hun" fullWidth margin="dense" onChange={handleChange} value={editData.value_for_hun} />
+          <div
+            className={`logoImage h-52 flex items-center justify-center gap-5 w-full border border-[#BBBBBB] ${
+              isDragging ? "bg-gray-300" : ""
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <label
+              htmlFor="background"
+              className="w-full h-full cursor-pointer flex"
+            >
+              {background ? (
+                <img
+                  src={background}
+                  alt="backgroundEvent"
+                  className="w-full h-full"
+                />
+              ) : (
+                <div className="w-full flex flex-col items-center justify-center gap-2">
+                  <div className="icon">📷</div>
+                  <span className="text-[#275963] text-lg">
+                    اسحب الصورة هنا أو تصفح الملفات
+                  </span>
+                </div>
+              )}
+              <input
+                type="file"
+                id="background"
+                hidden
+                onChange={handleBackgroundChange}
+              />
+            </label>
+          </div>
+          <TextField
+            label={t("اسم الفئة")}
+            name="name"
+            fullWidth
+            margin="dense"
+            onChange={handleChange}
+            value={editData.name}
+          />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>{t("إلغاء")}</Button>
-          <Button onClick={handleSubmit} color="primary" variant="contained" disabled={loadingSub}>
+          <Button onClick={handleCloseDialog}>{t("الغاء")}</Button>
+          <Button
+            onClick={handleSubmit}
+            color="primary"
+            variant="contained"
+            disabled={loadingSub}
+          >
             {loadingSub ? <CircularProgress size={20} /> : t("حفظ")}
           </Button>
         </DialogActions>

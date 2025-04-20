@@ -60,9 +60,7 @@ export default function TableRow({ currentData, fetchData, setBody }) {
     setLoading(true);
     try {
       await axios.post(
-        `${import.meta.env.VITE_API_URL}admin/get_events/pan/${
-          itemToBan.id
-        }`,
+        `${import.meta.env.VITE_API_URL}admin/get_events/pan/${itemToBan.id}`,
         {},
         {
           headers: {
@@ -141,14 +139,14 @@ export default function TableRow({ currentData, fetchData, setBody }) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleBanDialogClose}>{t("No")}</Button>
+          <Button onClick={handleBanDialogClose}>{t("لا")}</Button>
           <Button
             onClick={onBan}
             color="error"
             variant="contained"
             disabled={loading}
           >
-            {loading ? <CircularProgress size={20} /> : t("Yes")}
+            {loading ? <CircularProgress size={20} /> : t("نعم")}
           </Button>
         </DialogActions>
       </Dialog>

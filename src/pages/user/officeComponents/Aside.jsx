@@ -5,11 +5,16 @@ import { NavLink, useLocation } from "react-router-dom";
 // مصفوفة تحتوي على العناصر
 const menuItems = [
   "localReceived",
+  "localSended",
+  "internationalReceived",
+  "internationalSended",
+  "localEvent",
+  "internationalEvent",
 ];
 
 export default function Aside() {
   const { t } = useTranslation();
-  const location = useLocation();
+  const location = useLocation(); 
   const [table, setTable] = useState("");
   const [id, setId] = useState("");
 
